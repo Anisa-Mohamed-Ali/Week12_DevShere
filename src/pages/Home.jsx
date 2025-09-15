@@ -1,122 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// TODO: Import axios here
-
+import axios from 'axios';
 import moment from 'moment';
-import { Users, Star, GitBranch, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { Users, Star, GitBranch, MapPin, Calendar } from 'lucide-react';
 import '../styles/Home.css';
+
+const GITHUB_USER = 'Anisa-Mohamed-Ali'; // 👈 Hubi inaad ku qorto username-kaaga saxda ah
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TODO: Fetch user data from GitHub API using axios and useEffect and set the user state, also handle the loading and error states
-    // API: https://api.github.com/users/YOUR_USERNAME
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await axios.get(`https://api.github.com/users/${GITHUB_USER}`);
+        setUser(res.data);
+      } catch (err) {
+        setError('Error loading profile');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, []);
 
-
-
-  if (loading) {
-    return <div className="loading">Loading profile data...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  if (loading) return <div>Loading profile...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="home-container">
       {user && (
-        <>
-          <div className="profile-card">
-            <div className="profile-header">
-              <div className="avatar-container">
-                <img 
-                  src={user.avatar_url} 
-                  alt={`${user.name}'s avatar`} 
-                  className="avatar" 
-                />
-              </div>
-              <div className="profile-info">
-                <h1 className="profile-name">{user.name}</h1>
-                <h2 className="profile-username">@{user.login}</h2>
-                {user.location && (
-                  <p className="profile-location">
-                    <MapPin size={16} />
-                    <span>{user.location}</span>
-                  </p>
-                )}
-                <p className="profile-joined">
-                  <Calendar size={16} />
-                  <span>Joined on {moment(user.created_at).format('MMMM D, YYYY')}</span>
-                </p>
-              </div>
+        <div className="profile-card">
+          <div className="profile-header">
+            <div className="avatar-container">
+              <img src={user.avatar_url} alt="avatar" className="avatar" />
             </div>
-            
-            <div className="profile-bio">
-              <p>{user.bio || 'No bio available'}</p>
-            </div>
-
-            <div className="profile-stats">
-              <div className="stat-item">
-                <GitBranch size={18} />
-                <div className="stat-details">
-                  <span className="stat-value">{user.public_repos}</span>
-                  <span className="stat-label">Repositories</span>
-                </div>
-              </div>
-              <div className="stat-item">
-                <Users size={18} />
-                <div className="stat-details">
-                  <span className="stat-value">{user.followers}</span>
-                  <span className="stat-label">Followers</span>
-                </div>
-              </div>
-              <div className="stat-item">
-                <Star size={18} />
-                <div className="stat-details">
-                  <span className="stat-value">{user.following}</span>
-                  <span className="stat-label">Following</span>
-                </div>
-              </div>
-            </div>
-
-            {(user.company || user.blog) && (
-              <div className="profile-links">
-                {user.company && (
-                  <p className="profile-company">
-                    <span>Company:</span> {user.company}
-                  </p>
-                )}
-                {user.blog && (
-                  <p className="profile-website">
-                    <span>Website:</span> 
-                    <a href={user.blog.startsWith('http') ? user.blog : `https://${user.blog}`} 
-                       target="_blank" 
-                       rel="noopener noreferrer">
-                      {user.blog} <ExternalLink size={14} />
-                    </a>
-                  </p>
-                )}
-              </div>
-            )}
-
-            <div className="profile-actions">
-              <a 
-                href={user.html_url} 
-                className="btn btn-secondary"
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                Visit GitHub
-              </a>
-              <Link to="/projects" className="btn">
-                View Projects
-              </Link>
+            <div className="profile-info">
+              <h1>{user.name}</h1>
+              <h2>@{user.login}</h2>
+              {user.location && (
+                <p><MapPin size={16} /> {user.location}</p>
+              )}
+              <p><Calendar size={16} /> Joined {moment(user.created_at).format('MMMM D, YYYY')}</p>
             </div>
           </div>
-        </>
+
+          <p>{user.bio || 'No bio available'}</p>
+
+          <div className="profile-stats">
+            <p><GitBranch size={16}/> {user.public_repos} Repos</p>
+            <p><Users size={16}/> {user.followers} Followers</p>
+            <p><Star size={16}/> {user.following} Following</p>
+          </div>
+
+          <div className="profile-actions">
+            <a href={user.html_url} target="_blank" rel="noreferrer" className="btn">Visit GitHub</a>
+            <Link to="/projects" className="btn">View Projects</Link>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,8 +1,5 @@
 import React from 'react';
-
-// TODO: Import LINK from react router dom components
-import { useLocation } from 'react-router-dom'
-
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Github } from 'lucide-react';
 import '../styles/Navbar.css';
 
@@ -12,6 +9,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* Logo */}
         <Link to="/" className="navbar-logo">
           <Github size={24} />
           <span>DevSphere</span>
@@ -19,10 +17,20 @@ const Navbar = () => {
 
         <ul className="navbar-menu">
           <li className="navbar-item">
-           {/* TODO: Add the home route here */}
+            <NavLink
+              to="/"
+              className={location.pathname === "/" ? "active" : ""}
+            >
+              Home
+            </NavLink>
           </li>
           <li className="navbar-item">
-            {/* TODO: Add the projects route here */}
+            <NavLink
+              to="/projects"
+              className={location.pathname === "/projects" ? "active" : ""}
+            >
+              Projects
+            </NavLink>
           </li>
         </ul>
       </div>

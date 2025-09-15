@@ -4,66 +4,73 @@ import { Star, GitFork, Eye, Clock } from 'lucide-react';
 import '../styles/ProjectCard.css';
 
 const ProjectCard = ({
-  name,
-  description,
-  language,
-  html_url,
-  stargazers_count,
-  forks_count,
+  name = '',
+  description = '',
+  language = '',
+  html_url = '#',
+  stargazers_count = 0,
+  forks_count = 0,
   updated_at,
-  topics,
-  watchers_count,
-}) => {  
+  topics = [],
+  watchers_count = 0,
+}) => {
   return (
     <div className="project-card">
+      {/* Header: magaca + language pill */}
       <div className="project-header">
         <h3 className="project-name">{name}</h3>
-        {language && (
-          <div className="language-badge">
-            {language}
-          </div>
-        )}
+        {language ? <span className="language-badge">{language}</span> : null}
       </div>
-      
+
+      {/* Sharaxaad */}
       <p className="project-description">
         {description || 'No description provided'}
       </p>
-      
-      {topics && topics.length > 0 && (
+
+      {/* Topics haddii ay jiraan */}
+      {Array.isArray(topics) && topics.length > 0 && (
         <div className="project-topics">
-          {topics.map((topic) => (
-            <span key={topic} className="topic-badge">
-              {topic}
+          {topics.map((t) => (
+            <span key={t} className="topic-badge">
+              {t}
             </span>
           ))}
         </div>
       )}
-      
+
+      {/* Khad kala qayb ah */}
+      <div style={{ borderTop: '1px solid #eaeaea', margin: '14px 0 10px' }} />
+
+      {/* Stats + Updated time */}
       <div className="project-stats">
         <div className="stat-group">
-          <div className="project-stat">
+          <span className="project-stat">
             <Star size={14} />
             <span>{stargazers_count}</span>
-          </div>
-          <div className="project-stat">
-            <GitFork size={14} />
-            <span>{forks_count}</span>
-          </div>
-          <div className="project-stat">
+          </span>
+          <span className="project-stat">
             <Eye size={14} />
             <span>{watchers_count}</span>
-          </div>
+          </span>
+          <span className="project-stat">
+            <GitFork size={14} />
+            <span>{forks_count}</span>
+          </span>
         </div>
-        <div className="project-updated">
+
+        <span className="project-updated">
           <Clock size={14} />
-          <span>Updated {moment(updated_at).format('MMM D, YYYY')}</span>
-        </div>
+          <span>
+            Updated {updated_at ? moment(updated_at).format('MMM D, YYYY') : '—'}
+          </span>
+        </span>
       </div>
-      
-      <a 
-        href={html_url} 
-        target="_blank" 
-        rel="noopener noreferrer" 
+
+      {/* Link GitHub */}
+      <a
+        href={html_url}
+        target="_blank"
+        rel="noopener noreferrer"
         className="project-link"
       >
         View on GitHub
